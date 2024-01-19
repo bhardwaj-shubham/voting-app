@@ -1,5 +1,9 @@
-const express = require('express');
-const { registerVoter, loginVoter, getVoterProfile } = require("../controllers/voterController");
+const express = require("express");
+const {
+	registerVoter,
+	loginVoter,
+	getVoterProfile,
+} = require("../controllers/voterController");
 
 const router = express.Router();
 

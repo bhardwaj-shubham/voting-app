@@ -1,15 +1,16 @@
-import { useEffect } from "react";
 import "./App.css";
 import Login from "./components/Login";
-import WebcamCapture from "./components/WebcamCapture";
+import Signup from "./components/Signup";
 
 function App() {
 	return (
-		<>
+		<div className="container">
 			{/* <CandidateLoginSignup /> */}
-			<Login />
+			{/* <Login /> */}
+			<Signup />
+			{/* <VoterSignup /> */}
 			{/* <WebcamCapture /> */}
-		</>
+		</div>
 	);
 }
 

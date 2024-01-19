@@ -1,22 +1,24 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
+import "./signup.css";
+import axios from "axios";
 
 const Signup = () => {
 	const [formData, setFormData] = useState({
 		aadharNo: "",
 		password: "",
 		name: "",
-		dob: "",
-		area: "",
+		email: "",
+		dateOfBirth: "",
+		address: "",
 		pincode: "",
 		partyName: "",
-		partyLogo: null,
-		userPhoto: null,
-		aadharCardPhoto: null,
+		partyLogo: "",
+		aadharFront: "",
 	});
 
-	const [webcamActive, setWebcamActive] = useState(false);
-	const videoRef = useRef(null);
-	const canvasRef = useRef(null);
+	const [userType, setUserType] = useState("");
+	const [isCandidate, setIsCandidate] = useState(false);
+	const [isAdmin, setIsAdmin] = useState(false);
 
 	const handleChange = (e) => {
 		const { name, value, files } = e.target;
@@ -24,55 +26,41 @@ const Signup = () => {
 			...prevData,
 			[name]: files ? files[0] : value,
 		}));
+
+		// console.log(e.target);
 	};
 
-	const startWebcam = async () => {
-		try {
-			const stream = await navigator.mediaDevices.getUserMedia({
-				video: true,
-			});
-			setWebcamActive(true);
-
-			if (videoRef.current) {
-				videoRef.current.srcObject = stream;
-			}
-		} catch (error) {
-			console.error("Error accessing webcam:", error);
-		}
-	};
-
-	const stopWebcam = () => {
-		setWebcamActive(false);
-		if (videoRef.current && videoRef.current.srcObject) {
-			const tracks = videoRef.current.srcObject.getTracks();
-			tracks.forEach((track) => track.stop());
-		}
-	};
-
-	const capturePhoto = () => {
-		if (videoRef.current && canvasRef.current) {
-			const video = videoRef.current;
-			const canvas = canvasRef.current;
-			canvas.width = video.videoWidth;
-			canvas.height = video.videoHeight;
-			canvas
-				.getContext("2d")
-				.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
-
-			const userPhotoDataUrl = canvas.toDataURL("image/jpeg");
-			setFormData((prevData) => ({
-				...prevData,
-				userPhoto: userPhotoDataUrl,
-			}));
-
-			stopWebcam();
-		}
-	};
-
-	const handleSubmit = (e) => {
+	const handleSubmit = async (e) => {
 		e.preventDefault();
 		// Add your form submission logic here
-		console.log(formData);
+
+		axios
+			.post(`http://localhost:3000/api/${userType}/register`, formData)
+			.then((response) => {
+				console.log("Response from server:", response.data);
+				// Handle the response as needed
+			})
+			.catch((error) => {
+				console.error("Error:", error);
+				// Handle errors
+			});
+
+		// console.log(formData);
+	};
+
+	const handleUserTypeChange = (e) => {
+		setUserType(e.target.value);
+		if (e.target.value === "candidates") {
+			setIsCandidate(true);
+		} else {
+			setIsCandidate(false);
+		}
+		if (e.target.value === "admins") {
+			setIsAdmin(true);
+		} else {
+			setIsAdmin(false);
+		}
+		console.log(userType);
 	};
 
 	return (
@@ -82,10 +70,11 @@ const Signup = () => {
 				<label>
 					Aadhar No:
 					<input
-						type="text"
+						type="number"
 						name="aadharNo"
 						value={formData.aadharNo}
 						onChange={handleChange}
+						required
 					/>
 				</label>
 
@@ -96,6 +85,7 @@ const Signup = () => {
 						name="password"
 						value={formData.password}
 						onChange={handleChange}
+						required
 					/>
 				</label>
 
@@ -106,102 +96,116 @@ const Signup = () => {
 						name="name"
 						value={formData.name}
 						onChange={handleChange}
+						required
 					/>
 				</label>
 
 				<label>
-					Date of Birth:
+					Email:
 					<input
-						type="date"
-						name="dob"
-						value={formData.dob}
-						onChange={handleChange}
-					/>
-				</label>
-
-				<label>
-					Address:
-					<input
-						type="text"
-						name="area"
-						value={formData.area}
-						onChange={handleChange}
-					/>
-				</label>
-
-				<label>
-					Pincode:
-					<input
-						type="text"
-						name="pincode"
-						value={formData.pincode}
-						onChange={handleChange}
-					/>
-				</label>
-
-				<label>
-					Party Name:
-					<input
-						type="text"
-						name="partyName"
-						value={formData.partyName}
-						onChange={handleChange}
-					/>
-				</label>
-
-				<label>
-					Party Logo:
-					<input
-						type="file"
-						name="partyLogo"
-						onChange={handleChange}
-					/>
-				</label>
-
-				<label>
-					Aadhar Card Photo:
-					<input
-						type="file"
-						name="aadharCardPhoto"
-						onChange={handleChange}
-					/>
-				</label>
-
-				<label>
-					User Photo:
-					{webcamActive ? (
-						<div>
-							<video ref={videoRef} autoPlay playsInline />
-							<button type="button" onClick={capturePhoto}>
-								Capture Photo
-							</button>
-							<button type="button" onClick={stopWebcam}>
-								Stop Webcam
-							</button>
-						</div>
-					) : (
-						<button type="button" onClick={startWebcam}>
-							Start Webcam
-						</button>
-					)}
-				</label>
-
-				<canvas ref={canvasRef} style={{ display: "none" }} />
-
-				<label>
-					Aadhar Card Photo:
-					<input
-						type="file"
-						name="aadharCardPhoto"
-						accept="image/*"
+						type="email"
+						name="email"
+						value={formData.email}
 						onChange={handleChange}
 						required
 					/>
 				</label>
 
+				<label>
+					User Type:
+					<select
+						name="userType"
+						required
+						onChange={handleUserTypeChange}
+						value={userType}
+					>
+						<option value="">Select User Type</option>
+						<option value="admins">Admin</option>
+						<option value="voters">Voter</option>
+						<option value="candidates">Candidate</option>
+					</select>
+				</label>
+
+				{userType !== "" && <div>You selected {userType}</div>}
+
+				{!isAdmin && (
+					<>
+						<label>
+							Date of Birth:
+							<input
+								type="date"
+								name="dateOfBirth"
+								value={formData.dob}
+								onChange={handleChange}
+								required
+							/>
+						</label>
+
+						<label>
+							Address:
+							<input
+								type="text"
+								name="address"
+								value={formData.area}
+								onChange={handleChange}
+							/>
+						</label>
+
+						<label>
+							Pincode:
+							<input
+								type="number"
+								name="pincode"
+								value={formData.pincode}
+								onChange={handleChange}
+								required
+							/>
+						</label>
+
+						<label>
+							Aadhar Card Photo:
+							<input
+								type="file"
+								name="aadharFront"
+								accept="image/*"
+								onChange={handleChange}
+								// required
+							/>
+						</label>
+					</>
+				)}
+
+				{isCandidate ? (
+					<>
+						<label>
+							Party Name:
+							<input
+								type="text"
+								name="partyName"
+								value={formData.partyName}
+								onChange={handleChange}
+								required
+							/>
+						</label>
+
+						<label>
+							Party Logo:
+							<input
+								type="file"
+								name="partyLogo"
+								accept="image/*"
+								onChange={handleChange}
+								// required
+							/>
+						</label>
+					</>
+				) : null}
+
 				<button type="submit">Sign Up</button>
+				<button> Login</button>
 			</form>
 		</div>
 	);
 };
+
 export default Signup;

@@ -1,95 +1,110 @@
-const asyncHandler = require('express-async-handler');
-const bcrypt = require('bcrypt');
-const Voter = require('../models/voterModel');
+const asyncHandler = require("express-async-handler");
+const bcrypt = require("bcrypt");
+const Voter = require("../models/voterModel");
 
 const registerVoter = asyncHandler(async (req, res) => {
-    console.log(req.body);
-    const {
-        votername,
-        email,
-        password,
-        aadharNo,
-        dateOfBirth,
-        address,
-        pincode,
-        aadharFront,
-        realPhoto,
-    } = req.body;
+	console.log("Voter Register data", req.body);
+	let {
+		name,
+		email,
+		password,
+		aadharNo,
+		dateOfBirth,
+		address,
+		pincode,
+		aadharFront,
+		// realPhoto,
+	} = req.body;
 
-    const voterExists = await Voter.findOne({ aadharNo });
+	if (
+		aadharFront === undefined ||
+		aadharFront === null ||
+		Object.keys(aadharFront).length === 0
+	) {
+		aadharFront = "";
+	}
 
-    if (voterExists) {
-        res.status(400);
-        throw new Error('Voter already exists');
-    }
+	console.log("aadharFront", aadharFront);
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const voter = await Voter.create({
-        votername,
-        email,
-        password: hashedPassword,
-        aadharNo,
-        dateOfBirth,
-        address,
-        pincode,
-        aadharFront,
-        realPhoto,
-    });
+	const voterExists = await Voter.findOne({ aadharNo });
 
-    if (voter) {
-        res.status(201).json({
-            _id: voter._id,
-            votername: voter.votername,
-            email: voter.email,
-            aadharNo: voter.aadharNo,
-            dateOfBirth: voter.dateOfBirth,
-            address: voter.address,
-            pincode: voter.pincode,
-            aadharFront: voter.aadharFront,
-            realPhoto: voter.realPhoto,
-        });
-    } else {
-        res.status(400).json({ message: 'Invalid voter data' });
-    }
-    res.json(voter);
+	if (voterExists) {
+		return res.status(400).send("Voter already exists");
+	}
+
+	const hashedPassword = await bcrypt.hash(password, 10);
+	const voter = await Voter.create({
+		votername: name,
+		email,
+		password: hashedPassword,
+		aadharNo,
+		dateOfBirth,
+		address,
+		pincode,
+		aadharFront,
+		// realPhoto,
+	});
+
+	if (voter) {
+		return res.status(201).json({
+			_id: voter._id,
+			votername: voter.votername,
+			email: voter.email,
+			aadharNo: voter.aadharNo,
+			dateOfBirth: voter.dateOfBirth,
+			address: voter.address,
+			pincode: voter.pincode,
+			aadharFront: voter.aadharFront,
+			// realPhoto: voter.realPhoto,
+		});
+	} else {
+		return res.status(400).json({ message: "Invalid voter data" });
+	}
 });
 
 const loginVoter = asyncHandler(async (req, res) => {
-    const { aadharNo, password } = req.body;
-    if (!aadharNo || !password) {
-        res.status(400);
-        throw new Error('Please enter all the fields');
-    }
+	const { aadharNo, password } = req.body;
 
-    const voter = await Voter.findOne({ aadharNo });
+	if (!aadharNo || !password) {
+		return res.status(400).send("Please enter all the fields");
+	}
 
-    if (voter && (await bcrypt.compare(password, voter.password))) {
-        res.sendStatus(200);
-    } else {
-        res.status(401);
-        throw new Error('Invalid aadhar number or password');
-    }
+	const voter = await Voter.findOne({ aadharNo });
+
+	if (voter && (await bcrypt.compare(password, voter.password))) {
+		return res.status(200).json({
+			_id: voter._id,
+			votername: voter.votername,
+			aadharNo: voter.aadharNo,
+		});
+	} else {
+		return res.status(401).send("Invalid aadhar number or password");
+	}
 });
 
 const getVoterProfile = asyncHandler(async (req, res) => {
-    const voter = await Voter.findById(req.voter._id);
+	// console.log("req.body", req.body.aadharNo);
+	const voter = await Voter.find({ aadharNo: req.body.aadharNo });
 
-    if (voter) {
-        res.json({
-            _id: voter._id,
-            votername: voter.votername,
-            email: voter.email,
-            aadhar: voter.aadhar,
-            dateOfBirth: voter.dateOfBirth,
-            address: voter.address,
-            pincode: voter.pincode,
-            aadharFront: voter.aadharFront,
-            realPhoto: voter.realPhoto,
-        });
-    } else {
-        res.status(404);
-        throw new Error('Voter not found');
-    }
+	// console.log("voter", voter);
+
+	if (voter) {
+		// return res.status(200).json({
+		// 	_id: voter._id,
+		// 	votername: voter.votername,
+		// 	email: voter.email,
+		// 	aadhar: voter.aadhar,
+		// 	dateOfBirth: voter.dateOfBirth,
+		// 	address: voter.address,
+		// 	pincode: voter.pincode,
+		// 	aadharFront: voter?.aadharFront,
+		// realPhoto: voter.realPhoto,
+		// });
+
+		return res.status(200).json(voter);
+	} else {
+		return res.status(404).send("Voter not found");
+	}
 });
 
 module.exports = { registerVoter, loginVoter, getVoterProfile };
