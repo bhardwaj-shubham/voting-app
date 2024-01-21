@@ -161,13 +161,14 @@ function Signup() {
 										</div>
 
 										<div className="md:col-span-2">
-											<label htmlFor="zipcode">
-												Pincode
+											<label htmlFor="pincode">
+												Pincode *
 											</label>
 											<input
 												type="text"
-												name="zipcode"
-												id="zipcode"
+												name="pincode"
+												id="pincode"
+												required
 												className="transition-all flex items-center h-10 border border-blue-gray-400 mt-1 rounded px-4 w-full bg-gray-50"
 												placeholder=""
 												{...register("pincode")}

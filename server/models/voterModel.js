@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const voterSchema = mongoose.Schema(
 	{
-		votername: {
+		name: {
 			type: String,
 			required: [true, "Please add the user name"],
 		},
@@ -15,30 +15,30 @@ const voterSchema = mongoose.Schema(
 			type: String,
 			required: [true, "Please add the user password"],
 		},
-		aadharNo: {
+		aadhaarNo: {
 			type: String,
 			required: [true, "Please add the user aadhar number"],
 			unique: [true, "Aadhar number already taken"],
 		},
 		dateOfBirth: {
 			type: Date,
-			required: [true, "Please add the user date of birth"],
+			required: false,
 		},
 		address: {
 			type: String,
-			required: [true, "Please add the user address"],
+			required: false,
 		},
 		pincode: {
 			type: String,
 			required: [true, "Please add the user pincode"],
 		},
-		aadharFront: {
+		aadhaarPhoto: {
 			type: String,
-			required: [false, "Please add the user aadhar front image"],
+			required: [true, "Please add the user aadhaar front image"],
 		},
-		realPhoto: {
+		userPhoto: {
 			type: String,
-			required: [false, "Please add the user real photo"],
+			required: [true, "Please add the user real photo"],
 		},
 	},
 	{

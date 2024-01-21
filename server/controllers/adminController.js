@@ -2,96 +2,79 @@ const asyncHandler = require("express-async-handler");
 const bcrypt = require("bcrypt");
 const Admin = require("../models/adminModel");
 
-const registerAdmin = asyncHandler(async (req, res) => {
-	console.log(req.body);
-	const {
-		name,
-		email,
-		password,
-		aadharNo,
-		// dateOfBirth,
-		// address,
-		// pincode,
-		// aadharFront,
-		// realPhoto,
-	} = req.body;
+// const registerAdmin = asyncHandler(async (req, res) => {
+// 	const { name, email, password } = req.body;
 
-	const adminExists = await Admin.findOne({ aadharNo });
+// 	const adminExists = await Admin.findOne({ email });
 
-	if (adminExists) {
-		return res.status(400).send("Admin already exists");
-	}
+// 	if (adminExists) {
+// 		return res.status(400).send("Admin already exists");
+// 	}
 
-	const hashedPassword = await bcrypt.hash(password, 10);
-	const admin = await Admin.create({
-		adminname: name,
-		email,
-		password: hashedPassword,
-		aadharNo,
-		// dateOfBirth,
-		// address,
-		// pincode,
-		// aadharFront,
-		// realPhoto,
-	});
+// 	const hashedPassword = await bcrypt.hash(password, 10);
 
-	if (admin) {
-		return res.status(201).json({
-			_id: admin._id,
-			adminname: admin.adminname,
-			email: admin.email,
-			aadharNo: admin.aadharNo,
-			// dateOfBirth: admin.dateOfBirth,
-			// address: admin.address,
-			// pincode: admin.pincode,
-			// aadharFront: admin.aadharFront,
-			// realPhoto: admin.realPhoto,
-		});
-	} else {
-		return res.status(400).json({ message: "Invalid admin data" });
-	}
-});
+// 	try {
+// 		const admin = await Admin.create({
+// 			...req.body,
+// 			password: hashedPassword,
+// 		});
+
+// 		if (admin) {
+// 			return res.status(201).json(admin);
+// 		} else {
+// 			throw new Error();
+// 		}
+// 	} catch (error) {
+// 		return res.status(400).json({ message: "Invalid admin data" });
+// 	}
+// });
 
 const loginAdmin = asyncHandler(async (req, res) => {
-	const { aadharNo, password } = req.body;
+	const { email, password } = req.body;
 
-	if (!aadharNo || !password) {
+	if (!email || !password) {
 		return res.status(400).send("Please enter all the fields");
 	}
 
-	const admin = await Admin.findOne({ aadharNo });
+	try {
+		const admin = await Admin.findOne({ email });
 
-	if (admin && (await bcrypt.compare(password, admin.password))) {
-		return res.status(200).json({
-			_id: admin._id,
-			adminname: admin.adminname,
-			aadharNo: admin.aadharNo,
-		});
-	} else {
-		return res.status(401).send("Invalid aadhar number or password");
+		if (!admin) {
+			throw new Error();
+		}
+
+		if (admin && (await bcrypt.compare(password, admin.password))) {
+			return res.status(200).json({
+				_id: admin._id,
+				name: admin.name,
+				email: admin.email,
+			});
+		} else {
+			throw new Error();
+		}
+	} catch (error) {
+		return res.status(401).send("Invalid email or password");
 	}
 });
 
 const getAdminProfile = asyncHandler(async (req, res) => {
-	const admin = await Admin.find({ aadharNo: req.body.aadharNo });
+	console.log("Admin Profile data", req.query);
 
-	if (admin) {
-		// return res.json({
-		// 	_id: admin._id,
-		// 	adminname: admin.adminname,
-		// 	email: admin.email,
-		// 	aadharNo: admin.aadhar,
-		// dateOfBirth: admin.dateOfBirth,
-		// address: admin.address,
-		// pincode: admin.pincode,
-		// aadharFront: admin.aadharFront,
-		// realPhoto: admin.realPhoto,
-		// });
+	try {
+		const admin = await Admin.findById(req.query.id);
 
-		return res.status(200).json(admin);
-	} else {
-		return res.status(404).send("Candidate not found");
+		if (!admin) {
+			throw new Error();
+		}
+
+		return res.status(200).json({
+			_id: admin._id,
+			name: admin.name,
+			email: admin.email,
+		});
+	} catch (error) {
+		return res.status(401).send("Invalid email or password");
 	}
 });
 
-module.exports = { registerAdmin, loginAdmin, getAdminProfile };
+module.exports = { loginAdmin, getAdminProfile };

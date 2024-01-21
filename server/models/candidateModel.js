@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const candidateSchema = mongoose.Schema(
 	{
-		candidatename: {
+		name: {
 			type: String,
 			required: [true, "Please add the candidate name"],
 		},
@@ -15,30 +15,30 @@ const candidateSchema = mongoose.Schema(
 			type: String,
 			required: [true, "Please add the candidate password"],
 		},
-		aadharNo: {
+		aadhaarNo: {
 			type: String,
 			required: [true, "Please add the candidate aadhar number"],
 			unique: [true, "Aadhar number already taken"],
 		},
 		dateOfBirth: {
 			type: Date,
-			required: [true, "Please add the candidate date of birth"],
+			required: false,
 		},
 		address: {
 			type: String,
-			required: [true, "Please add the candidate address"],
+			required: false,
 		},
 		pincode: {
 			type: String,
 			required: [true, "Please add the candidate pincode"],
 		},
-		aadharFront: {
+		aadhaarPhoto: {
 			type: String,
-			required: [false, "Please add the candidate aadhar front image"],
+			required: [true, "Please add the candidate aadhaar front image"],
 		},
-		realPhoto: {
+		userPhoto: {
 			type: String,
-			required: [false, "Please add the candidate real photo"],
+			required: [true, "Please add the candidate real photo"],
 		},
 		partyName: {
 			type: String,
@@ -46,7 +46,7 @@ const candidateSchema = mongoose.Schema(
 		},
 		partyLogo: {
 			type: String,
-			required: [false, "Please add the candidate party logo"],
+			required: false,
 		},
 	},
 	{

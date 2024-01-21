@@ -11,9 +11,9 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 app.use(cors());
 
-app.use("/api/voters", require("./routes/voterRoutes"));
-app.use("/api/candidates", require("./routes/candidateRoutes"));
-app.use("/api/admins", require("./routes/adminRoutes"));
+app.use("/voters", require("./routes/voterRoutes"));
+app.use("/candidates", require("./routes/candidateRoutes"));
+app.use("/admins", require("./routes/adminRoutes"));
 app.use(errorHandler);
 
 app.listen(port, () =>

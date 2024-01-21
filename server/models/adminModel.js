@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const adminSchema = mongoose.Schema(
 	{
-		adminname: {
+		name: {
 			type: String,
 			required: [true, "Please add the admin name"],
 		},
@@ -14,11 +14,6 @@ const adminSchema = mongoose.Schema(
 		password: {
 			type: String,
 			required: [true, "Please add the admin password"],
-		},
-		aadharNo: {
-			type: String,
-			required: [true, "Please add the admin aadhar number"],
-			unique: [true, "Aadhar number already taken"],
 		},
 	},
 	{
