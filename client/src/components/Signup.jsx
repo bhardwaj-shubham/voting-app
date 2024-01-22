@@ -1,10 +1,16 @@
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function Signup() {
 	const { register, handleSubmit, watch } = useForm({
 		mode: "onChange",
+		defaultValues: {
+			watchUserType: "Voters",
+		},
 	});
+
+	const navigate = useNavigate();
 
 	const watchUserType = watch("userType");
 
@@ -13,19 +19,25 @@ function Signup() {
 		const userType = watchUserType.toLowerCase();
 
 		// register request
-		const res = await axios.post(
-			`http://localhost:3000/${userType}/register`,
-			{
+		await axios
+			.post(`http://localhost:3000/${userType}/register`, {
 				...data,
 				aadhaarPhoto: data.aadhaarPhoto[0].name,
 				userPhoto: data.userPhoto[0].name,
-				partyLogo: data?.partyLogo[0]?.name,
-			}
-		);
+				partyLogo:
+					data.partyLogo && data.partyLogo[0]
+						? data.partyLogo[0].name
+						: undefined,
+			})
+			.then((res) => {
+				console.log(res);
+				navigate("/login");
+			})
+			.catch((err) => {
+				console.log(err);
+			});
 
-		console.log(res);
-
-		console.log(data);
+		// console.log(data);
 	}
 
 	function handleError(errors) {

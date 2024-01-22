@@ -47,20 +47,6 @@ const Login = () => {
 		<div className="bg-gradient-to-r from-blue-900 via-blue-700 to-blue-500 min-h-screen flex items-center justify-center ">
 			<div className="bg-white p-8 rounded-lg shadow-md w-96">
 				{isError ? (
-					// <div className="flex justify-between items-center">
-					// 	<p className="bg-red-500 text-white font-medium text-center py-2 px-2 mb-2 rounded-full">
-					// 		<svg
-					// 			xmlns="http://www.w3.org/2000/svg"
-					// 			className="h-4 w-4"
-					// 			viewBox="0 0 20 20"
-					// 			fill="currentColor"
-					// 		>
-					// 			<path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
-					// 		</svg>
-					// 		Please check your credentials.
-					// 	</p>
-					// </div>
-
 					<div className="px-2 py-2 mb-2 bg-red-500 text-white flex justify-between rounded-full">
 						<div className="flex items-center">
 							<svg
