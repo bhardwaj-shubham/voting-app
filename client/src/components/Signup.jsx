@@ -1,4 +1,5 @@
 import { useForm } from "react-hook-form";
+import axios from "axios";
 
 function Signup() {
 	const { register, handleSubmit, watch } = useForm({
@@ -7,7 +8,23 @@ function Signup() {
 
 	const watchUserType = watch("userType");
 
-	function handleRegistration(data) {
+	async function handleRegistration(data) {
+		console.log(data);
+		const userType = watchUserType.toLowerCase();
+
+		// register request
+		const res = await axios.post(
+			`http://localhost:3000/${userType}/register`,
+			{
+				...data,
+				aadhaarPhoto: data.aadhaarPhoto[0].name,
+				userPhoto: data.userPhoto[0].name,
+				partyLogo: data?.partyLogo[0]?.name,
+			}
+		);
+
+		console.log(res);
+
 		console.log(data);
 	}
 

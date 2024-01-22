@@ -1,12 +1,30 @@
 import { useState } from "react";
+import axios from "axios";
 
 const Login = () => {
 	const [aadhaarNo, setAadhaar] = useState("");
 	const [password, setPassword] = useState("");
+	const [email, setEmail] = useState("");
+	const [userType, setUserType] = useState("voter");
 
-	const handleLogin = () => {
-		console.log("Aadhaar:", aadhaarNo);
-		console.log("Password:", password);
+	const handleLogin = async () => {
+		const user = userType.toLowerCase();
+		console.log(aadhaarNo, password, userType);
+
+		// login request
+		const res = await axios.post(`http://localhost:3000/${user}s/login`, {
+			aadhaarNo,
+			password,
+			email,
+		});
+
+		// redirect to dashboard
+
+		console.log(res);
+
+		// console.log("Aadhaar:", aadhaarNo);
+		// console.log("Password:", password);
+		// console.log(userType);
 	};
 
 	return (
@@ -16,24 +34,44 @@ const Login = () => {
 					E-Voting Login
 				</h2>
 				<form>
-					<div className="mb-4">
-						<label
-							htmlFor="aadhaarNo"
-							className="block text-gray-600 text-sm font-semibold mb-2"
-						>
-							Aadhaar No
-						</label>
-						<input
-							type="text"
-							id="aadharNo"
-							className="text-black w-full px-3 py-2 border border-blue-gray-400 rounded-md focus:outline-none focus:border-blue-500"
-							placeholder="Enter your aadhaar"
-							minLength="12"
-							maxLength="12"
-							value={aadhaarNo}
-							onChange={(e) => setAadhaar(e.target.value)}
-						/>
-					</div>
+					{userType === "Admin" ? (
+						<div className="mb-4">
+							<label
+								htmlFor="email"
+								className="block text-gray-600 text-sm font-semibold mb-2"
+							>
+								Email
+							</label>
+							<input
+								type="email"
+								id="email"
+								className="text-black w-full px-3 py-2 border border-blue-gray-400 rounded-md focus:outline-none focus:border-blue-500"
+								placeholder="Enter your email"
+								required
+								value={email}
+								onChange={(e) => setEmail(e.target.value)}
+							/>
+						</div>
+					) : (
+						<div className="mb-4">
+							<label
+								htmlFor="aadhaarNo"
+								className="block text-gray-600 text-sm font-semibold mb-2"
+							>
+								Aadhaar No
+							</label>
+							<input
+								type="text"
+								id="aadharNo"
+								className="text-black w-full px-3 py-2 border border-blue-gray-400 rounded-md focus:outline-none focus:border-blue-500"
+								placeholder="Enter your aadhaar"
+								minLength="12"
+								maxLength="12"
+								value={aadhaarNo}
+								onChange={(e) => setAadhaar(e.target.value)}
+							/>
+						</div>
+					)}
 
 					<div className="mb-6">
 						<label
@@ -48,7 +86,9 @@ const Login = () => {
 							className="text-black w-full px-3 py-2 border border-blue-gray-400 rounded-md focus:outline-none focus:border-blue-500"
 							placeholder="Enter your password"
 							value={password}
-							onChange={(e) => setPassword(e.target.value)}
+							onChange={(e) => {
+								setPassword(e.target.value);
+							}}
 						/>
 					</div>
 
@@ -59,7 +99,11 @@ const Login = () => {
 						>
 							User Type
 						</label>
-						<select className="text-black w-full px-3 py-2 border border-blue-gray-400 rounded-md focus:outline-none focus:border-blue-600">
+						<select
+							value={userType}
+							onChange={(e) => setUserType(e.target.value)}
+							className="text-black w-full px-3 py-2 border border-blue-gray-400 rounded-md focus:outline-none focus:border-blue-600"
+						>
 							<option name="voters">Voter</option>
 							<option name="candidates">Candidate</option>
 							<option name="admins">Admin</option>
