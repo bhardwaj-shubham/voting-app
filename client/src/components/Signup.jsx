@@ -1,6 +1,8 @@
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+// import { storage } from "../firebase/firebaseConfig";
+// import { ref, uploadBytesResumable } from "firebase/storage";
 
 function Signup() {
 	const { register, handleSubmit, watch } = useForm({
@@ -13,6 +15,34 @@ function Signup() {
 	const navigate = useNavigate();
 
 	const watchUserType = watch("userType");
+
+	// upload file to firebase storage
+	// async function uploadFile(data) {
+	// 	try {
+	// 		// referencing aadhaar photo
+	// 		const voterAadhaarPhotoRef = ref(storage, `/files/${watchUserType}/aadhaar/${data.aadhaarPhoto[0].name}`);
+	// 		const candidateAadhaarPhotoRef = ref(storage, `/files/${watchUserType}/aadhaar/${data.aadhaarPhoto[0].name}`);
+
+	// 		// referencing user photo
+	// 		const voterUserPhotoRef = ref(storage, `/files/${watchUserType}/user/${data.userPhoto[0].name}`);
+	// 		const candidateUserPhotoRef = ref(storage, `/files/${watchUserType}/user/${data.userPhoto[0].name}`);
+
+	// 		// referencing party logo
+	// 		const candidatePartyLogoRef = ref(storage, `/files/${watchUserType}/party/${data.partyLogo[0].name}`);
+
+	// 		// uploading
+	// 		const uploadVoterAadhaarPhoto = uploadBytesResumable(voterAadhaarPhotoRef, data.aadhaarPhoto[0]);
+	// 		const uploadCandidateAadhaarPhoto = uploadBytesResumable(candidateAadhaarPhotoRef, data.aadhaarPhoto[0]);
+
+	// 		const uploadVoterUserPhoto = uploadBytesResumable(voterUserPhotoRef, data.userPhoto[0]);
+	// 		const uploadCandidateUserPhoto = uploadBytesResumable(candidateUserPhotoRef, data.userPhoto[0]);
+
+	// 		const uploadCandidatePartyLogo = uploadBytesResumable(candidatePartyLogoRef, data.partyLogo[0]);
+
+	// 	} catch (error) {
+
+	// 	}
+	// }
 
 	async function handleRegistration(data) {
 		console.log(data);
